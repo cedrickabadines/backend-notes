@@ -1,0 +1,6 @@
+Main Folder 
+Create Frontend folder
+>npm init vite
+>configs
+	Ø cd frontend folder
+npm run dev
