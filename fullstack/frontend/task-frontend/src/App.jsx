@@ -7,9 +7,6 @@ import axios from "axios";
 function App() {
   const [appear_button, setAppear_Button] = useState(false);
   const [count, setCount] = useState(0);
-  const world = () => {
-    alert(`Hello World`);
-  };
 
   const [myData, setMyData] = useState([]);
 
@@ -73,14 +70,14 @@ function App() {
   const viewtask = (id) => {
     setMyPet(true);
     axios
-      .get(`http://localhost:8080/task-api/get-task/${id}`)
+      .get(`http://localhost:8080/task-api/getById/${id}`)
       .then((res) => {
-        console.log(res.data.findOne.task_name);
+        console.log(res.data.task);
         setTaskDetails(res.data);
         setTaskObj({
           ...taskObj,
           id: id,
-          taskName: res.data.findOne.task_name,
+          taskName: res.data.task,
         });
       })
       .catch((error) => {
@@ -150,7 +147,7 @@ function App() {
             return (
               <tr key={data.id}>
                 <td>{index + 1}</td>
-                <td>{data.task_name}</td>
+                <td>{data.task}</td>
                 <td>
                   <button
                     onClick={() => {
@@ -173,12 +170,9 @@ function App() {
                   <button
                     onClick={() => {
                       setMyPet(false);
-                      settaskObj({
+                      setTaskObj({
                         ...taskObj,
                         taskName: "",
-                        taskCode: "",
-                        taskDescription: "",
-                        taskPassword: "",
                       });
                     }}
                   >
