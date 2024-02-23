@@ -92,7 +92,7 @@ function App() {
         task_name: taskObj.taskName,
       })
       .then((res) => {
-        setMyData(res.data);
+        setMyData(res.data.data);
       })
       .catch((error) => {
         console.log(error);
