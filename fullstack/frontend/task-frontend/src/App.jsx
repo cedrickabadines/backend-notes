@@ -54,6 +54,7 @@ function App() {
     axios
       .delete(`http://localhost:8080/task-api/delete-task/${id}`)
       .then((res) => {
+        console.log(res.data);
         setMyData(res.data.data);
         setTaskObj({
           ...taskObj,
