@@ -1,0 +1,145 @@
+server => models, specific router
+controller => specific object from model
+router => express, objects from controller
+
+const express = require("express");
+const router = express.Router();
+const cors = require("cors");
+const db = require("./models");
+const todoRoute = require("./routes/todo_routes");
+const { connection } = require("./postgresql.js");
+const app = express();
+const port = 8080;
+app.use(cors());
+app.use(express.json());
+app.use("/todo_api", todoRoute);
+connection();
+db.sequelize.sync().then(() => {
+  app.listen(port, () => console.log(`HIIII ${port}`));
+});
+
+sequelize orm
+
+npm init -y
+npm i cors express nodemon mysql2
+
+npm install pg pg-hstore
+npm install --save sequelize
+npm install -g sequelize-cli 
+npx sequelize init
+
+
+
+
+
+install sequelize
+config the config.json
+create models folder and file
+	module.exports = (sequelize, DataTypes) => {
+	  const todo_tbl = sequelize.define("todo_tbl", {
+	    id: {
+	      type: DataTypes.INTEGER,
+	      autoIncrement: true,
+	      primaryKey: true,
+	    },
+	    todo: {
+	      type: DataTypes.STRING,
+	      allowNull: false,
+	    },
+	  });
+	  return todo_tbl;
+	};
+	
+create routes folder and file and import the controller
+	const express = require("express");
+	const router = express.Router();
+	const {
+	  addTask,
+	  getTask,
+	  deleteTask,
+	  updateTask,
+	  getTaskById,
+	} = require("../controllers/todo_controller");
+	router.post("/create", addTask);
+	router.get("/get", getTask);
+	router.delete("/delete/:todo_id", deleteTask);
+	router.put("/update/:todo_id", updateTask);
+	router.get("/getById/:todo_id", getTaskById);
+	module.exports = router;
+	
+create controller and import the models folder (specific table)
+	const db = require("../models");
+	const { todo_tbl } = require("../models");
+	const addTask = async (req, res) => {
+	  const { todo_name } = req.body;
+	  try {
+	    await todo_tbl.create({ todo: todo_name });
+	    const task = await todo_tbl.findAll({
+	      order: [["id", "ASC"]],
+	    });
+	    return res.status(200).json(task);
+	  } catch (error) {
+	    return res.status(500).json(error);
+	  }
+	};
+	const getTask = async (req, res) => {
+	  try {
+	    const task = await todo_tbl.findAll({
+	      order: [["id", "ASC"]],
+	    });
+	    return res.status(200).json(task);
+	  } catch (error) {
+	    return res.status(500).json(error);
+	  }
+	};
+	const deleteTask = async (req, res) => {
+	  const { todo_id } = req.params;
+	  try {
+	    await todo_tbl.destroy({ where: { id: todo_id } });
+	    const task = await todo_tbl.findAll({
+	      order: [["id", "ASC"]],
+	    });
+	    return res.status(200).json({ data: task, message: "deleted successfuly" });
+	  } catch (error) {
+	    return res.status(500).json(error);
+	  }
+	};
+	const updateTask = async (req, res) => {
+	  const { todo_id } = req.params;
+	  const { todo_name } = req.body;
+	  try {
+	    await todo_tbl.update({ todo: todo_name }, { where: { id: todo_id } });
+	    const task = await todo_tbl.findAll({
+	      order: [["id", "ASC"]],
+	    });
+	    return res.status(200).json({ data: task, message: "updated successfuly" });
+	  } catch (error) {
+	    return res.status(500).json(error);
+	  }
+	};
+	const getTaskById = async (req, res) => {
+	  const { todo_id } = req.params;
+	  try {
+	    const findOne = await todo_tbl.findOne({ where: { id: todo_id } });
+	    return res.status(200).json(findOne);
+	  } catch (error) {
+	    return res.status(500).json(error);
+	  }
+	};
+	module.exports = {
+	  addTask,
+	  getTask,
+	  deleteTask,
+	  updateTask,
+	  getTaskById,
+	};
+	
+then create server.js as above
+
+
+Main Folder 
+Create Frontend folder
+>npm init vite
+>configs
+	Ø cd frontend folder
+npm run dev
